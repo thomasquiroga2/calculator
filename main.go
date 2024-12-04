@@ -1,46 +1,18 @@
 package main
 
-// VERSION EN ESPAÑOL 1.0
-
 import (
 	"bufio"
+	"calculator/aritmetica"
 	"fmt"
 	"os"
 	"strconv"
 )
 
-// Estructura Aritmetica para almacenar los números
-type Aritmetica struct {
-	a, b int
-}
-
-// Métodos para realizar las operaciones
-func (arit *Aritmetica) sumar() int {
-	return arit.a + arit.b
-}
-
-func (arit *Aritmetica) restar() int {
-	return arit.a - arit.b
-}
-
-func (arit *Aritmetica) dividir() float64 {
-	if arit.b == 0 {
-		fmt.Println("Error: División por cero no permitida.")
-		return 0
-	}
-	return float64(arit.a) / float64(arit.b)
-}
-
-func (arit *Aritmetica) multiplicar() int {
-	return arit.a * arit.b
-}
-
-// Función principal
 func main() {
-	var aritmetica Aritmetica
-
-	fmt.Println("BIENVENIDO A LA CALCULADORA!")
+	var aritmetica aritmetica.Aritmetica
 	scanner := bufio.NewScanner(os.Stdin)
+
+	fmt.Println("\nBIENVENIDO A LA CALCULADORA!")
 
 	for {
 		fmt.Println("\nPOR FAVOR, SELECCIONE UNA OPCION:")
@@ -51,54 +23,46 @@ func main() {
 		fmt.Println("5. SALIR")
 
 		// Leer la opción del usuario
-		scanner.Scan()
-		opcionInput := scanner.Text()
-		opcion, err := strconv.Atoi(opcionInput)
-		if err != nil {
-			fmt.Println("SOLO SE PUEDE DIGITAR NUMEROS!")
-			continue
-		}
-
-		if opcion > 5 || opcion < 1 {
-			fmt.Println("OPCION INCORRECTA, POR FAVOR, DIGITE UNA OPCION VALIDA!")
-			continue
-		}
-
+		opcion := leerEntero("OPCIÓN", scanner)
 		if opcion == 5 {
-			fmt.Println("GRACIAS POR UTILIZAR LA CALCULADORA 2! :)")
+			fmt.Println("\nGRACIAS POR UTILIZAR LA CALCULADORA!")
 			break
 		}
 
 		// Leer los dos números
-		fmt.Print("DIGITE EL PRIMER NUMERO: ")
-		scanner.Scan()
-		aritmetica.a, err = strconv.Atoi(scanner.Text())
-		if err != nil {
-			fmt.Println("SOLO SE PUEDE DIGITAR NUMEROS!")
-			continue
-		}
-
-		fmt.Print("DIGITE EL SEGUNDO NUMERO: ")
-		scanner.Scan()
-		aritmetica.b, err = strconv.Atoi(scanner.Text())
-		if err != nil {
-			fmt.Println("SOLO SE PUEDE DIGITAR NUMEROS!")
-			continue
-		}
+		aritmetica.A = leerEntero("PRIMER NÚMERO", scanner)
+		aritmetica.B = leerEntero("SEGUNDO NÚMERO", scanner)
 
 		// Realizar la operación seleccionada
 		switch opcion {
 		case 1:
-			fmt.Printf("EL RESULTADO DE LA SUMA ES: %d\n", aritmetica.sumar())
+			fmt.Printf("\nEL RESULTADO DE LA SUMA ES: %d\n", aritmetica.Sumar())
 		case 2:
-			fmt.Printf("EL RESULTADO DE LA RESTA ES: %d\n", aritmetica.restar())
+			fmt.Printf("\nEL RESULTADO DE LA RESTA ES: %d\n", aritmetica.Restar())
 		case 3:
-			result := aritmetica.dividir()
-			if result != 0 {
-				fmt.Printf("EL RESULTADO DE LA DIVISION ES: %.2f\n", result)
+			result, err := aritmetica.Dividir()
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				fmt.Printf("\nEL RESULTADO DE LA DIVISIÓN ES: %.2f\n", result)
 			}
 		case 4:
-			fmt.Printf("EL RESULTADO DE LA MULTIPLICACION ES: %d\n", aritmetica.multiplicar())
+			fmt.Printf("\nEL RESULTADO DE LA MULTIPLICACIÓN ES: %d\n", aritmetica.Multiplicar())
+		default:
+			fmt.Println("\nOPCIÓN INCORRECTA, POR FAVOR, DIGITE UNA OPCIÓN VÁLIDA!")
+		}
+	}
+}
+
+func leerEntero(mensaje string, scanner *bufio.Scanner) int {
+	for {
+		fmt.Printf("\nDIGITE LA %s: ", mensaje)
+		scanner.Scan()
+		valor, err := strconv.Atoi(scanner.Text())
+		if err != nil {
+			fmt.Println("\nSOLO SE PUEDE DIGITAR NÚMEROS!")
+		} else {
+			return valor
 		}
 	}
 }
